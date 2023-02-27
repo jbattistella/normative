@@ -1,0 +1,25 @@
+event api
+
+get data for the current week
+store in the database
+if time is X then ping api and store in the database
+
+cli command to get data for the current week and the current day
+
+
+price info
+
+build an api o that takes data through my data provider
+accesses the csv
+clean the csv 
+add data to the database if the record is not in the database
+
+
+query that gets data for a specofic region 
+Select region and impact
+
+flags that will narrow the reqults 
+if given a region and impact flag then 
+
+
+finish test for geteventsbyfilter
