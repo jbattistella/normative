@@ -24,3 +24,7 @@ AND
     impact = $2
 AND
     impact = $3;
+
+
+
+

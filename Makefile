@@ -5,18 +5,18 @@ dropdb:
 	dropdb market_normative
 
 migrateup:
-	migrate -path db/migrations -database "postgresql:///market_normative?sslmode=disable" -verbose up
+	migrate -path db/migrations -database "postgresql://postgres:pJGlBJilIdmLHvJIIFfq@containers-us-west-107.railway.app:6131/railway?sslmode=disable" -verbose up
 
 migratetestup:
-	migrate -path db/migrations -database "postgresql:///test_normative?sslmode=disable" -verbose up
+	migrate -path db/migrations -database "postgresql://postgres:pJGlBJilIdmLHvJIIFfq@containers-us-west-107.railway.app:6131/railway?sslmode=disable" -verbose up
 
 migratedown:
-	migrate -path db/migrations -database "postgresql:///market_normative?sslmode=disable" -verbose down
+	migrate -path db/migrations -database "postgresql://postgres:pJGlBJilIdmLHvJIIFfq@containers-us-west-107.railway.app:6131/railway?sslmode=disable" -verbose down
 
 migratetestdown:
-	migrate -path db/migrations -database "postgresql:///test_normative?sslmode=disable" -verbose down
+	migrate -path db/migrations -database "postgresql://postgres:pJGlBJilIdmLHvJIIFfq@containers-us-west-107.railway.app:6131/railway?sslmode=disable" -verbose down
 
 sqlc:
 	sqlc generate
 	
-.PHONY: craetedb dropdb migrateup migratedown sqlc
+.PHONY: craetedb dropdb migrateup migratedown sqlcs

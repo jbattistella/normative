@@ -1,37 +1,66 @@
 package main
 
 import (
-	"encoding/json"
+	"context"
+	"database/sql"
 	"fmt"
 	"log"
-	"net/http"
 
-	"github.com/jbattistella/normative/models"
+	db "github.com/jbattistella/normative/db/sqlc"
+
+	_ "github.com/lib/pq"
+
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+)
+
+var Queries *db.Queries
+
+var DB *sql.DB
+
+const (
+	dbDriver = "postgres"
+	dbSource = "postgresql://postgres:pJGlBJilIdmLHvJIIFfq@containers-us-west-107.railway.app:6131/railway?sslmode=disable"
 )
 
 func main() {
 
-	url := "https://economiccalendar.p.rapidapi.com/events/1598072400000/1756771140000"
+	// url := "https://economiccalendar.p.rapidapi.com/events/1598072400000/1756771140000"
 
-	req, _ := http.NewRequest("GET", url, nil)
+	// req, _ := http.NewRequest("GET", url, nil)
 
-	req.Header.Add("X-RapidAPI-Key", "9cd8d9ff35mshcd24dd50afc9fc4p12258ejsnd0541ec9480b")
-	req.Header.Add("X-RapidAPI-Host", "economiccalendar.p.rapidapi.com")
+	// req.Header.Add("X-RapidAPI-Key", "9cd8d9ff35mshcd24dd50afc9fc4p12258ejsnd0541ec9480b")
+	// req.Header.Add("X-RapidAPI-Host", "economiccalendar.p.rapidapi.com")
 
-	res, err := http.DefaultClient.Do(req)
+	// res, err := http.DefaultClient.Do(req)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+	// defer res.Body.Close()
+
+	// var econEvents models.EconomicEvents
+
+	// if err = json.NewDecoder(res.Body).Decode(&econEvents); err != nil {
+	// 	log.Print(err)
+	// }
+	// for _, v := range econEvents.Events {
+	// 	fmt.Println(v.Name)
+	// 	fmt.Println(v.Datetime)
+
+	// }
+
+	var err error
+	DB, err = sql.Open(dbDriver, dbSource)
 	if err != nil {
-		log.Println(err)
+		log.Fatal("cannot connect to db:", err)
 	}
-	defer res.Body.Close()
 
-	var econEvents models.EconomicEvents
+	Queries = db.New(DB)
 
-	if err = json.NewDecoder(res.Body).Decode(&econEvents); err != nil {
-		log.Print(err)
-	}
-	for _, v := range econEvents.Events {
-		fmt.Println(v.Name)
-		fmt.Println(v.Datetime)
+	days, _ := Queries.GetMarketData(context.Background())
 
-	}
+	fmt.Println(days[0:30])
+
+	// Queries.GetMarketData(context.Background())
+
 }

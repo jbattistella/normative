@@ -6,10 +6,10 @@ CREATE TABLE "market" (
 CREATE TABLE "intraday" (
   "id" bigserial,
   "datetime" timestamp with time zone unique,
-  "open" float,
-  "high" float,
-  "low" float,
-  "close" float,
+  "open" real,
+  "high" real,
+  "low" real,
+  "close" real,
   "volume" int,
   "bidvolume" int,
   "askvolume" int,
@@ -18,16 +18,20 @@ CREATE TABLE "intraday" (
   PRIMARY KEY ("id", "datetime")
 );
 
-CREATE TABLE "end_of_day" (
+CREATE TABLE "market_days" (
   "id" bigserial,
   "date" date unique,
-  "open" float,
-  "high" float,
-  "low" float,
-  "close" float,
-  "volume" int,
-  "bidvolume" int,
-  "askvolume" int,
+  "open" real NOT NULL,
+  "high" real NOT NULL,
+  "low" real NOT NULL,
+  "last" real NOT NULL,
+  "range" real  NOT NULL,
+  "volume" real NOT NULL,
+  "poc3yr" real NOT NULL,
+  "poc1yr" real NOT NULL,
+  "poc0yr" real NOT NULL,   
+  "poc1wk" real NOT NULL,
+  "poc1m" real NOT NULL,
   "market_id" int,
   PRIMARY KEY ("id", "date")
   
@@ -45,9 +49,5 @@ CREATE TABLE "events" (
   "region" varchar(50) NOT NULL
 );
 
-ALTER TABLE "intraday" ADD FOREIGN KEY ("market_id") REFERENCES "market" ("id");
 
-ALTER TABLE "end_of_day" ADD FOREIGN KEY ("market_id") REFERENCES "market" ("id");
-
-ALTER TABLE "intraday" ADD FOREIGN KEY ("date") REFERENCES "end_of_day" ("date");
 

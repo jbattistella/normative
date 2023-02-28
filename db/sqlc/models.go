@@ -9,19 +9,6 @@ import (
 	"time"
 )
 
-type EndOfDay struct {
-	ID        int64           `json:"id"`
-	Date      time.Time       `json:"date"`
-	Open      sql.NullFloat64 `json:"open"`
-	High      sql.NullFloat64 `json:"high"`
-	Low       sql.NullFloat64 `json:"low"`
-	Close     sql.NullFloat64 `json:"close"`
-	Volume    sql.NullInt32   `json:"volume"`
-	Bidvolume sql.NullInt32   `json:"bidvolume"`
-	Askvolume sql.NullInt32   `json:"askvolume"`
-	MarketID  sql.NullInt32   `json:"market_id"`
-}
-
 type Event struct {
 	ID         int32     `json:"id"`
 	Date       time.Time `json:"date"`
@@ -51,4 +38,21 @@ type Intraday struct {
 type Market struct {
 	ID   int32          `json:"id"`
 	Name sql.NullString `json:"name"`
+}
+
+type MarketDay struct {
+	ID       int64         `json:"id"`
+	Date     time.Time     `json:"date"`
+	Open     float32       `json:"open"`
+	High     float32       `json:"high"`
+	Low      float32       `json:"low"`
+	Last     float32       `json:"last"`
+	Range    float32       `json:"range"`
+	Volume   float32       `json:"volume"`
+	Poc3yr   float32       `json:"poc3yr"`
+	Poc1yr   float32       `json:"poc1yr"`
+	Poc0yr   float32       `json:"poc0yr"`
+	Poc1wk   float32       `json:"poc1wk"`
+	Poc1m    float32       `json:"poc1m"`
+	MarketID sql.NullInt32 `json:"market_id"`
 }
