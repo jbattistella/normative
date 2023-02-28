@@ -7,6 +7,7 @@ import (
 	"log"
 
 	db "github.com/jbattistella/normative/db/sqlc"
+	"github.com/jbattistella/normative/studies"
 
 	_ "github.com/lib/pq"
 
@@ -59,7 +60,15 @@ func main() {
 
 	days, _ := Queries.GetMarketData(context.Background())
 
-	fmt.Println(days[0:30])
+	// for i := 0; i < 20; i++ {
+	// 	fmt.Println(days[i].Range)
+	// }
+
+	averageRange := studies.AverageVolumeByDay(days, 20)
+
+	for k, v := range averageRange {
+		fmt.Printf("average volume for %s: %0.2f\n", k, v)
+	}
 
 	// Queries.GetMarketData(context.Background())
 
