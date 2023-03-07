@@ -2,14 +2,13 @@ package client
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/jbattistella/normative/models"
 )
 
-func GetEvents() {
+func GetEvents() *models.EconomicEvents {
 	url := "https://economiccalendar.p.rapidapi.com/events/1598072400000/1756771140000"
 
 	req, _ := http.NewRequest("GET", url, nil)
@@ -28,10 +27,7 @@ func GetEvents() {
 	if err = json.NewDecoder(res.Body).Decode(&econEvents); err != nil {
 		log.Print(err)
 	}
-	for _, v := range econEvents.Events {
-		fmt.Println(v.Name)
-		fmt.Println(v.Datetime)
 
-	}
+	return &econEvents
 
 }

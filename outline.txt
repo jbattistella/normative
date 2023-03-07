@@ -23,3 +23,75 @@ if given a region and impact flag then
 
 
 finish test for geteventsbyfilter
+
+// package client
+
+// import (
+// 	"encoding/json"
+// 	"log"
+// 	"net/http"
+// 	"time"
+
+// 	db "github.com/jbattistella/normative/db/sqlc"
+// 	// "github.com/jbattistella/normative/models"
+// )
+
+// type EconomicEvents struct {
+// 	Events    []EconomicEvent `json:"events"`
+// 	Info      string          `json:"info"`
+// 	NumEvents int             `json:"num-events"`
+// }
+
+// type EconomicEvent struct {
+// 	Actual     string `json:"Actual"`
+// 	Currency   string `json:"Currency"`
+// 	Datetime   string `json:"Datetime"`
+// 	Forecast   string `json:"Forecast"`
+// 	Impact     string `json:"Impact"`
+// 	LastUpdate int64  `json:"Last Update"`
+// 	Name       string `json:"Name"`
+// 	Previous   string `json:"Previous"`
+// 	Region     string `json:"Region"`
+// 	Timestamp  int64  `json:"Timestamp"`
+// }
+
+// func LoadEventsClient() {
+
+// 	// url := "https://economiccalendar.p.rapidapi.com/events/1598072400000/1756771140000"
+
+// 	req, _ := http.NewRequest("GET", url, nil)
+
+// 	req.Header.Add("X-RapidAPI-Key", "9cd8d9ff35mshcd24dd50afc9fc4p12258ejsnd0541ec9480b")
+// 	req.Header.Add("X-RapidAPI-Host", "economiccalendar.p.rapidapi.com")
+
+// 	res, err := http.DefaultClient.Do(req)
+// 	if err != nil {
+// 		log.Println(err)
+// 	}
+// 	defer res.Body.Close()
+
+// 	var econEvents EconomicEvents
+
+// 	if err = json.NewDecoder(res.Body).Decode(&econEvents); err != nil {
+// 		log.Print(err)
+// 	}
+// 	for _, v := range econEvents.Events {
+
+// 		layout1 := "2006-01-02"
+// 		Date := time.Parse(layout, v.Datetime)
+// 		layout2 := "2006-01-02 15:04:05"
+// 		Time := time.Parse(layout2, v.Datetime)
+
+// 		args := db.CreateEventParams{
+// 			Date:       v.Date,
+// 			Datetime:   v.Time,
+// 			Forecast:   v.Forecast,
+// 			Impact:     v.Impact,
+// 			LastUpdate: v.LastUpdate,
+// 			Name:       v.Name,
+// 			Previous:   v.Previous,
+// 			Region:     v.Region,
+// 		}
+
+// 	}
+// }

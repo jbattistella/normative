@@ -1,74 +1,72 @@
 package main
 
 import (
-	"context"
-	"database/sql"
+	"flag"
 	"fmt"
 	"log"
 
 	db "github.com/jbattistella/normative/db/sqlc"
-	"github.com/jbattistella/normative/studies"
-
-	_ "github.com/lib/pq"
-
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/jbattistella/normative/engine"
 )
 
-var Queries *db.Queries
+var Region string
+var Impact string
+var Update bool
 
-var DB *sql.DB
+func init() {
 
-const (
-	dbDriver = "postgres"
-	dbSource = "postgresql://postgres:pJGlBJilIdmLHvJIIFfq@containers-us-west-107.railway.app:6131/railway?sslmode=disable"
-)
+	flag.BoolVar(&Update, "u", false, "Update the database")
+
+	flag.StringVar(&Region, "Region", "United States", "a string var")
+
+	flag.StringVar(&Impact, "Impact", "high", "a string var")
+
+	flag.Parse()
+
+}
 
 func main() {
 
-	// url := "https://economiccalendar.p.rapidapi.com/events/1598072400000/1756771140000"
+	//todo: create flags to update db, pass in args for event filter, and choose study's to display
+	//todo: get quote filter
 
-	// req, _ := http.NewRequest("GET", url, nil)
+	if Update {
+		err := db.UpdateEvents()
+		if err != nil {
+			log.Println(err)
+		}
+	}
 
-	// req.Header.Add("X-RapidAPI-Key", "9cd8d9ff35mshcd24dd50afc9fc4p12258ejsnd0541ec9480b")
-	// req.Header.Add("X-RapidAPI-Host", "economiccalendar.p.rapidapi.com")
+	ep := engine.NewEventParams()
 
-	// res, err := http.DefaultClient.Do(req)
+	ep.Region = Region
+	ep.Impact = append(ep.Impact, Impact)
+
+	// err := db.UpdateEvents()
 	// if err != nil {
 	// 	log.Println(err)
 	// }
-	// defer res.Body.Close()
 
-	// var econEvents models.EconomicEvents
-
-	// if err = json.NewDecoder(res.Body).Decode(&econEvents); err != nil {
-	// 	log.Print(err)
-	// }
-	// for _, v := range econEvents.Events {
-	// 	fmt.Println(v.Name)
-	// 	fmt.Println(v.Datetime)
-
-	// }
-
-	var err error
-	DB, err = sql.Open(dbDriver, dbSource)
+	ev, err := ep.GetEvents()
 	if err != nil {
-		log.Fatal("cannot connect to db:", err)
+		log.Println(err)
 	}
 
-	Queries = db.New(DB)
-
-	days, _ := Queries.GetMarketData(context.Background())
-
-	// for i := 0; i < 20; i++ {
-	// 	fmt.Println(days[i].Range)
-	// }
-
-	averageRange := studies.AverageVolumeByDay(days, 20)
-
-	for k, v := range averageRange {
-		fmt.Printf("average volume for %s: %0.2f\n", k, v)
+	for _, v := range ev {
+		date := v.Date.String()[0:10]
+		time := v.Time.String()[12:19]
+		fmt.Printf("%s | %s | %s | %s \n", date, time, v.Impact, v.Name)
 	}
+
+	marketDays, err := engine.GetMarketByDate("2022-12-31", "2023-01-03")
+
+	for _, v := range marketDays {
+		fmt.Println(v.Open)
+	}
+
+	// ee := client.GetEvents()
+
+	// fmt.Println(ee.Events)
 
 	// Queries.GetMarketData(context.Background())
 

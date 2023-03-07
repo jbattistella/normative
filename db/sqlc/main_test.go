@@ -17,12 +17,12 @@ import (
 
 var testQueries *Queries
 
-var testDB *sql.DB
+// var testDB *sql.DB
 
-const (
-	dbDriver = "postgres"
-	dbSource = "postgresql:///test_normative?sslmode=disable"
-)
+// const (
+// 	dbDriver = "postgres"
+// 	dbSource = "postgresql://postgres:pJGlBJilIdmLHvJIIFfq@containers-us-west-107.railway.app:6131/railway"
+// )
 
 func TestMain(m *testing.M) {
 	cmd := exec.Command("dropdb", "--if-exists", "test_normative")
@@ -46,7 +46,7 @@ func TestMain(m *testing.M) {
 		log.Fatal(err)
 	}
 
-	testDB, err = sql.Open(dbDriver, dbSource)
+	testDB, err := sql.Open(dbDriver, dbSource)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}

@@ -23,13 +23,73 @@ func (q *Queries) GetAveageRange(ctx context.Context, limit int32) (float64, err
 	return avg, err
 }
 
-const getMarketData = `-- name: GetMarketData :many
+const getLastMarketRecord = `-- name: GetLastMarketRecord :one
 SELECT id, date, open, high, low, last, range, volume, poc3yr, poc1yr, poc0yr, poc1wk, poc1m, market_id FROM market_days
 ORDER BY date ASC
+LIMIT 1
 `
 
-func (q *Queries) GetMarketData(ctx context.Context) ([]MarketDay, error) {
-	rows, err := q.db.QueryContext(ctx, getMarketData)
+func (q *Queries) GetLastMarketRecord(ctx context.Context) (MarketDay, error) {
+	row := q.db.QueryRowContext(ctx, getLastMarketRecord)
+	var i MarketDay
+	err := row.Scan(
+		&i.ID,
+		&i.Date,
+		&i.Open,
+		&i.High,
+		&i.Low,
+		&i.Last,
+		&i.Range,
+		&i.Volume,
+		&i.Poc3yr,
+		&i.Poc1yr,
+		&i.Poc0yr,
+		&i.Poc1wk,
+		&i.Poc1m,
+		&i.MarketID,
+	)
+	return i, err
+}
+
+const getMarketDataByDate = `-- name: GetMarketDataByDate :one
+SELECT id, date, open, high, low, last, range, volume, poc3yr, poc1yr, poc0yr, poc1wk, poc1m, market_id FROM market_days
+WHERE date = $1
+`
+
+func (q *Queries) GetMarketDataByDate(ctx context.Context, date time.Time) (MarketDay, error) {
+	row := q.db.QueryRowContext(ctx, getMarketDataByDate, date)
+	var i MarketDay
+	err := row.Scan(
+		&i.ID,
+		&i.Date,
+		&i.Open,
+		&i.High,
+		&i.Low,
+		&i.Last,
+		&i.Range,
+		&i.Volume,
+		&i.Poc3yr,
+		&i.Poc1yr,
+		&i.Poc0yr,
+		&i.Poc1wk,
+		&i.Poc1m,
+		&i.MarketID,
+	)
+	return i, err
+}
+
+const getMarketDataByDateRange = `-- name: GetMarketDataByDateRange :many
+SELECT id, date, open, high, low, last, range, volume, poc3yr, poc1yr, poc0yr, poc1wk, poc1m, market_id FROM market_days
+WHERE date BETWEEN $1 AND $2
+`
+
+type GetMarketDataByDateRangeParams struct {
+	Date   time.Time `json:"date"`
+	Date_2 time.Time `json:"date_2"`
+}
+
+func (q *Queries) GetMarketDataByDateRange(ctx context.Context, arg GetMarketDataByDateRangeParams) ([]MarketDay, error) {
+	rows, err := q.db.QueryContext(ctx, getMarketDataByDateRange, arg.Date, arg.Date_2)
 	if err != nil {
 		return nil, err
 	}
@@ -66,18 +126,14 @@ func (q *Queries) GetMarketData(ctx context.Context) ([]MarketDay, error) {
 	return items, nil
 }
 
-const getMarketDataByDate = `-- name: GetMarketDataByDate :many
+const getMarketDataByDays = `-- name: GetMarketDataByDays :many
 SELECT id, date, open, high, low, last, range, volume, poc3yr, poc1yr, poc0yr, poc1wk, poc1m, market_id FROM market_days
-WHERE date BETWEEN $1 AND $2
+ORDER BY date ASC
+LIMIT $1
 `
 
-type GetMarketDataByDateParams struct {
-	Date   time.Time `json:"date"`
-	Date_2 time.Time `json:"date_2"`
-}
-
-func (q *Queries) GetMarketDataByDate(ctx context.Context, arg GetMarketDataByDateParams) ([]MarketDay, error) {
-	rows, err := q.db.QueryContext(ctx, getMarketDataByDate, arg.Date, arg.Date_2)
+func (q *Queries) GetMarketDataByDays(ctx context.Context, limit int32) ([]MarketDay, error) {
+	rows, err := q.db.QueryContext(ctx, getMarketDataByDays, limit)
 	if err != nil {
 		return nil, err
 	}

@@ -16,6 +16,10 @@ INSERT INTO events (
 SELECT * FROM events
 WHERE date = $1;
 
+-- name: GetLastEventDate :one
+SELECT date FROM events
+ORDER BY date DESC LIMIT 1;
+
 -- name: GetEventsWithFilter :many
 SELECT * FROM events
 WHERE 

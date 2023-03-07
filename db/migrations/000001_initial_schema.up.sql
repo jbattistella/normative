@@ -3,21 +3,6 @@ CREATE TABLE "market" (
   "name" varchar(50)
 );
 
-CREATE TABLE "intraday" (
-  "id" bigserial,
-  "datetime" timestamp with time zone unique,
-  "open" real,
-  "high" real,
-  "low" real,
-  "close" real,
-  "volume" int,
-  "bidvolume" int,
-  "askvolume" int,
-  "date" date,
-  "market_id" int,
-  PRIMARY KEY ("id", "datetime")
-);
-
 CREATE TABLE "market_days" (
   "id" bigserial,
   "date" date unique,
@@ -34,8 +19,30 @@ CREATE TABLE "market_days" (
   "poc1m" real NOT NULL,
   "market_id" int,
   PRIMARY KEY ("id", "date")
-  
 );
+
+CREATE TABLE "day_info"(
+  "id" bigserial, 
+  "date" date unique,
+  "day_range" real NOT NULL,
+  "week_range" real NOT NULL,
+  "month_range" real NOT NULL,
+  "year_range" real NOT NULL,
+  "market_day_date" int NOT NULL,
+  PRIMARY KEY ("id")
+);
+
+CREATE TABLE "open_prices"(
+  "id" bigserial,
+  "market" varchar(20) NOT NULL,
+  "year_open" real NOT NULL,
+  "month_open" real NOT NULL,
+  "week_open" real NOT NULL,
+  "updated" timestamp NOT NULL DEFAULT CURRENT_TIM,
+  PRIMARY KEY ("id")
+);
+
+
 
 CREATE TABLE "events" (
   "id" serial PRIMARY KEY,
@@ -48,6 +55,8 @@ CREATE TABLE "events" (
   "previous" varchar(50) NOT NULL,
   "region" varchar(50) NOT NULL
 );
+
+ALTER TABLE "day_info" ADD FOREIGN KEY ("market_day_date") REFERENCES "market_days" ("date");
 
 
 

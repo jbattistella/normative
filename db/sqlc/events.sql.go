@@ -148,3 +148,15 @@ func (q *Queries) GetEventsWithFilter(ctx context.Context, arg GetEventsWithFilt
 	}
 	return items, nil
 }
+
+const getLastEventDate = `-- name: GetLastEventDate :one
+SELECT date FROM events
+ORDER BY date DESC LIMIT 1
+`
+
+func (q *Queries) GetLastEventDate(ctx context.Context) (time.Time, error) {
+	row := q.db.QueryRowContext(ctx, getLastEventDate)
+	var date time.Time
+	err := row.Scan(&date)
+	return date, err
+}

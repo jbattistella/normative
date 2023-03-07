@@ -1,10 +1,20 @@
--- name: GetMarketDataByDate :many
+-- name: GetMarketDataByDateRange :many
 SELECT * FROM market_days
 WHERE date BETWEEN $1 AND $2;
 
--- name: GetMarketData :many
+-- name: GetMarketDataByDate :one
 SELECT * FROM market_days
-ORDER BY date ASC;
+WHERE date = $1;
+
+-- name: GetMarketDataByDays :many
+SELECT * FROM market_days
+ORDER BY date ASC
+LIMIT $1;
+
+-- name: GetLastMarketRecord :one
+SELECT * FROM market_days
+ORDER BY date ASC
+LIMIT 1;
 
 -- name: GetAveageRange :one
 SELECT AVG(range) 
