@@ -42,11 +42,6 @@ func main() {
 	ep.Region = Region
 	ep.Impact = append(ep.Impact, Impact)
 
-	// err := db.UpdateEvents()
-	// if err != nil {
-	// 	log.Println(err)
-	// }
-
 	ev, err := ep.GetEvents()
 	if err != nil {
 		log.Println(err)
@@ -57,17 +52,5 @@ func main() {
 		time := v.Time.String()[12:19]
 		fmt.Printf("%s | %s | %s | %s \n", date, time, v.Impact, v.Name)
 	}
-
-	marketDays, err := engine.GetMarketByDate("2022-12-31", "2023-01-03")
-
-	for _, v := range marketDays {
-		fmt.Println(v.Open)
-	}
-
-	// ee := client.GetEvents()
-
-	// fmt.Println(ee.Events)
-
-	// Queries.GetMarketData(context.Background())
 
 }
