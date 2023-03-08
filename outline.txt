@@ -95,3 +95,6 @@ finish test for geteventsbyfilter
 
 // 	}
 // }
+
+
+Update opening price updated field to be populated with time.now()

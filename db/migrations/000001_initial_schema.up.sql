@@ -38,7 +38,7 @@ CREATE TABLE "open_prices"(
   "year_open" real NOT NULL,
   "month_open" real NOT NULL,
   "week_open" real NOT NULL,
-  "updated" timestamp NOT NULL DEFAULT CURRENT_TIM,
+  "updated" date NOT NULL,
   PRIMARY KEY ("id")
 );
 
@@ -56,7 +56,6 @@ CREATE TABLE "events" (
   "region" varchar(50) NOT NULL
 );
 
-ALTER TABLE "day_info" ADD FOREIGN KEY ("market_day_date") REFERENCES "market_days" ("date");
 
 
 

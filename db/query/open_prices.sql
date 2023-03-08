@@ -3,9 +3,10 @@ INSERT INTO open_prices (
     market,
     year_open,
     month_open,
-    week_open
+    week_open,
+    Updated
 ) VALUES (
-    $1, $2, $3, $4
+    $1, $2, $3, $4, $5
 ) RETURNING *;
 
 -- name: GetOpeningPrice :one
