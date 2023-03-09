@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"time"
 )
 
 const createOpeningPrice = `-- name: CreateOpeningPrice :one
@@ -14,17 +15,19 @@ INSERT INTO open_prices (
     market,
     year_open,
     month_open,
-    week_open
+    week_open,
+    Updated
 ) VALUES (
-    $1, $2, $3, $4
+    $1, $2, $3, $4, $5
 ) RETURNING id, market, year_open, month_open, week_open, updated
 `
 
 type CreateOpeningPriceParams struct {
-	Market    string  `json:"market"`
-	YearOpen  float32 `json:"year_open"`
-	MonthOpen float32 `json:"month_open"`
-	WeekOpen  float32 `json:"week_open"`
+	Market    string    `json:"market"`
+	YearOpen  float64   `json:"year_open"`
+	MonthOpen float64   `json:"month_open"`
+	WeekOpen  float64   `json:"week_open"`
+	Updated   time.Time `json:"updated"`
 }
 
 func (q *Queries) CreateOpeningPrice(ctx context.Context, arg CreateOpeningPriceParams) (OpenPrice, error) {
@@ -33,6 +36,7 @@ func (q *Queries) CreateOpeningPrice(ctx context.Context, arg CreateOpeningPrice
 		arg.YearOpen,
 		arg.MonthOpen,
 		arg.WeekOpen,
+		arg.Updated,
 	)
 	var i OpenPrice
 	err := row.Scan(
@@ -75,7 +79,7 @@ RETURNING id, market, year_open, month_open, week_open, updated
 
 type UpdateMonthPriceParams struct {
 	Market    string  `json:"market"`
-	MonthOpen float32 `json:"month_open"`
+	MonthOpen float64 `json:"month_open"`
 }
 
 func (q *Queries) UpdateMonthPrice(ctx context.Context, arg UpdateMonthPriceParams) (OpenPrice, error) {
@@ -101,7 +105,7 @@ RETURNING id, market, year_open, month_open, week_open, updated
 
 type UpdateWeekPriceParams struct {
 	Market   string  `json:"market"`
-	WeekOpen float32 `json:"week_open"`
+	WeekOpen float64 `json:"week_open"`
 }
 
 func (q *Queries) UpdateWeekPrice(ctx context.Context, arg UpdateWeekPriceParams) (OpenPrice, error) {
@@ -127,7 +131,7 @@ RETURNING id, market, year_open, month_open, week_open, updated
 
 type UpdateYearPriceParams struct {
 	Market   string  `json:"market"`
-	YearOpen float32 `json:"year_open"`
+	YearOpen float64 `json:"year_open"`
 }
 
 func (q *Queries) UpdateYearPrice(ctx context.Context, arg UpdateYearPriceParams) (OpenPrice, error) {

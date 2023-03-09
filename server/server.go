@@ -1,19 +1,38 @@
 package server
 
 import (
+	"context"
+	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	db "github.com/jbattistella/normative/db/sqlc"
 )
 
-func Server() {
+func Serve() {
 	r := gin.Default()
+	r.GET("/events/:limit", getEvents)
+	r.Run("localhost:8080")
+}
 
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "okay",
-		})
-	})
+func getEvents(c *gin.Context) {
 
-	r.Run("8080")
+	dbQueries, err := db.ConnectDB()
+	if err != nil {
+		log.Println(err)
+		// return http.StatusInternalServerError
+	}
+
+	limit := c.Param("limit")
+
+	lm, _ := strconv.Atoi(limit)
+
+	events, err := dbQueries.GetEventsList(context.Background(), int32(lm))
+	if err != nil {
+		log.Println(err)
+	}
+
+	c.IndentedJSON(http.StatusOK, events)
+
 }

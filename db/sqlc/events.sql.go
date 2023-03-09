@@ -100,12 +100,94 @@ func (q *Queries) GetEventByDate(ctx context.Context, date time.Time) ([]Event, 
 	return items, nil
 }
 
+const getEventsByRegion = `-- name: GetEventsByRegion :many
+SELECT id, date, time, forecast, impact, last_update, name, previous, region FROM Events 
+WHERE region = $1
+LIMIT $2
+`
+
+type GetEventsByRegionParams struct {
+	Region string `json:"region"`
+	Limit  int32  `json:"limit"`
+}
+
+func (q *Queries) GetEventsByRegion(ctx context.Context, arg GetEventsByRegionParams) ([]Event, error) {
+	rows, err := q.db.QueryContext(ctx, getEventsByRegion, arg.Region, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Event
+	for rows.Next() {
+		var i Event
+		if err := rows.Scan(
+			&i.ID,
+			&i.Date,
+			&i.Time,
+			&i.Forecast,
+			&i.Impact,
+			&i.LastUpdate,
+			&i.Name,
+			&i.Previous,
+			&i.Region,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getEventsList = `-- name: GetEventsList :many
+SELECT id, date, time, forecast, impact, last_update, name, previous, region FROM events
+LIMIT $1
+`
+
+func (q *Queries) GetEventsList(ctx context.Context, limit int32) ([]Event, error) {
+	rows, err := q.db.QueryContext(ctx, getEventsList, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Event
+	for rows.Next() {
+		var i Event
+		if err := rows.Scan(
+			&i.ID,
+			&i.Date,
+			&i.Time,
+			&i.Forecast,
+			&i.Impact,
+			&i.LastUpdate,
+			&i.Name,
+			&i.Previous,
+			&i.Region,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getEventsWithFilter = `-- name: GetEventsWithFilter :many
 SELECT id, date, time, forecast, impact, last_update, name, previous, region FROM events
 WHERE 
     region = $1
 AND
-    impact = $2
+    impact = $2 
 AND
     impact = $3
 `

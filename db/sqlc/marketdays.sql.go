@@ -10,6 +10,58 @@ import (
 	"time"
 )
 
+const createMarketDay = `-- name: CreateMarketDay :one
+INSERT INTO market_days (
+    date,
+    open,
+    high,
+    low,
+    last,
+    range,
+    volume,
+    market
+) VALUES (
+    $1, $2, $3, $4, $5, $6, $7, $8
+) RETURNING id, date, open, high, low, last, range, volume, market
+`
+
+type CreateMarketDayParams struct {
+	Date   time.Time `json:"date"`
+	Open   float64   `json:"open"`
+	High   float64   `json:"high"`
+	Low    float64   `json:"low"`
+	Last   float64   `json:"last"`
+	Range  float64   `json:"range"`
+	Volume float64   `json:"volume"`
+	Market string    `json:"market"`
+}
+
+func (q *Queries) CreateMarketDay(ctx context.Context, arg CreateMarketDayParams) (MarketDay, error) {
+	row := q.db.QueryRowContext(ctx, createMarketDay,
+		arg.Date,
+		arg.Open,
+		arg.High,
+		arg.Low,
+		arg.Last,
+		arg.Range,
+		arg.Volume,
+		arg.Market,
+	)
+	var i MarketDay
+	err := row.Scan(
+		&i.ID,
+		&i.Date,
+		&i.Open,
+		&i.High,
+		&i.Low,
+		&i.Last,
+		&i.Range,
+		&i.Volume,
+		&i.Market,
+	)
+	return i, err
+}
+
 const getAveageRange = `-- name: GetAveageRange :one
 SELECT AVG(range) 
 FROM market_days
@@ -24,7 +76,7 @@ func (q *Queries) GetAveageRange(ctx context.Context, limit int32) (float64, err
 }
 
 const getLastMarketRecord = `-- name: GetLastMarketRecord :one
-SELECT id, date, open, high, low, last, range, volume, poc3yr, poc1yr, poc0yr, poc1wk, poc1m, market_id FROM market_days
+SELECT id, date, open, high, low, last, range, volume, market FROM market_days
 ORDER BY date ASC
 LIMIT 1
 `
@@ -41,18 +93,13 @@ func (q *Queries) GetLastMarketRecord(ctx context.Context) (MarketDay, error) {
 		&i.Last,
 		&i.Range,
 		&i.Volume,
-		&i.Poc3yr,
-		&i.Poc1yr,
-		&i.Poc0yr,
-		&i.Poc1wk,
-		&i.Poc1m,
-		&i.MarketID,
+		&i.Market,
 	)
 	return i, err
 }
 
 const getMarketDataByDate = `-- name: GetMarketDataByDate :one
-SELECT id, date, open, high, low, last, range, volume, poc3yr, poc1yr, poc0yr, poc1wk, poc1m, market_id FROM market_days
+SELECT id, date, open, high, low, last, range, volume, market FROM market_days
 WHERE date = $1
 `
 
@@ -68,18 +115,13 @@ func (q *Queries) GetMarketDataByDate(ctx context.Context, date time.Time) (Mark
 		&i.Last,
 		&i.Range,
 		&i.Volume,
-		&i.Poc3yr,
-		&i.Poc1yr,
-		&i.Poc0yr,
-		&i.Poc1wk,
-		&i.Poc1m,
-		&i.MarketID,
+		&i.Market,
 	)
 	return i, err
 }
 
 const getMarketDataByDateRange = `-- name: GetMarketDataByDateRange :many
-SELECT id, date, open, high, low, last, range, volume, poc3yr, poc1yr, poc0yr, poc1wk, poc1m, market_id FROM market_days
+SELECT id, date, open, high, low, last, range, volume, market FROM market_days
 WHERE date BETWEEN $1 AND $2
 `
 
@@ -106,12 +148,7 @@ func (q *Queries) GetMarketDataByDateRange(ctx context.Context, arg GetMarketDat
 			&i.Last,
 			&i.Range,
 			&i.Volume,
-			&i.Poc3yr,
-			&i.Poc1yr,
-			&i.Poc0yr,
-			&i.Poc1wk,
-			&i.Poc1m,
-			&i.MarketID,
+			&i.Market,
 		); err != nil {
 			return nil, err
 		}
@@ -127,8 +164,8 @@ func (q *Queries) GetMarketDataByDateRange(ctx context.Context, arg GetMarketDat
 }
 
 const getMarketDataByDays = `-- name: GetMarketDataByDays :many
-SELECT id, date, open, high, low, last, range, volume, poc3yr, poc1yr, poc0yr, poc1wk, poc1m, market_id FROM market_days
-ORDER BY date ASC
+SELECT id, date, open, high, low, last, range, volume, market FROM market_days
+ORDER BY date DESC
 LIMIT $1
 `
 
@@ -150,12 +187,7 @@ func (q *Queries) GetMarketDataByDays(ctx context.Context, limit int32) ([]Marke
 			&i.Last,
 			&i.Range,
 			&i.Volume,
-			&i.Poc3yr,
-			&i.Poc1yr,
-			&i.Poc0yr,
-			&i.Poc1wk,
-			&i.Poc1m,
-			&i.MarketID,
+			&i.Market,
 		); err != nil {
 			return nil, err
 		}

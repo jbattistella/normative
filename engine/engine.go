@@ -50,31 +50,14 @@ func (e *EventParams) GetEvents() ([]db.Event, error) {
 	if err != nil {
 		return []db.Event{}, err
 	}
+
 	today := time.Now()
 
 	events, _ := queries.GetEventByDate(context.Background(), today)
 
-	// eEvents := getEventsJson()
-
 	var todayEvents []db.Event
 
 	for _, v := range events {
-		// layout2 := "2006/01/02 15:04:05"
-		// DateTime, err := time.Parse(layout2, v.Datetime)
-		// if err != nil {
-		// 	log.Printf("error parsing %s: %s", v.Datetime, err)
-		// }
-
-		// y1, m1, d1 := DateTime.Date()
-		// y2, m2, d2 := time.Now().Date()
-
-		// eventDate := fmt.Sprintf("%d, %v, %d", y1, m1, d1)
-		// today := fmt.Sprintf("%d, %v, %d", y2, m2, d2)
-
-		// fmt.Println(DateTime, time.Now())
-
-		// if eventDate == today {
-		// 	fmt.Println(DateTime, time.Now())
 
 		switch {
 
@@ -98,35 +81,4 @@ func (e *EventParams) GetEvents() ([]db.Event, error) {
 	}
 
 	return todayEvents, nil
-}
-
-func GetMarketByDateRange(d string, d2 string) ([]db.MarketDay, error) {
-
-	queries, err := db.ConnectDB()
-	if err != nil {
-		return []db.MarketDay{}, err
-	}
-
-	date, err := time.Parse("2006-01-02", d)
-	if err != nil {
-		log.Println(err)
-	}
-	date2, err := time.Parse("2006-01-02", d2)
-	if err != nil {
-		log.Println(err)
-	}
-
-	args := db.GetMarketDataByDateRangeParams{
-		Date:   date,
-		Date_2: date2,
-	}
-
-	marketDay, err := queries.GetMarketDataByDateRange(context.Background(), args)
-
-	if err != nil {
-		log.Println(err)
-	}
-
-	return marketDay, nil
-
 }

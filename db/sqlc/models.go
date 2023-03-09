@@ -9,16 +9,6 @@ import (
 	"time"
 )
 
-type DayInfo struct {
-	ID            int64        `json:"id"`
-	Date          sql.NullTime `json:"date"`
-	DayRange      float32      `json:"day_range"`
-	WeekRange     float32      `json:"week_range"`
-	MonthRange    float32      `json:"month_range"`
-	YearRange     float32      `json:"year_range"`
-	MarketDayDate int32        `json:"market_day_date"`
-}
-
 type Event struct {
 	ID         int32     `json:"id"`
 	Date       time.Time `json:"date"`
@@ -37,27 +27,22 @@ type Market struct {
 }
 
 type MarketDay struct {
-	ID       int64         `json:"id"`
-	Date     time.Time     `json:"date"`
-	Open     float32       `json:"open"`
-	High     float32       `json:"high"`
-	Low      float32       `json:"low"`
-	Last     float32       `json:"last"`
-	Range    float32       `json:"range"`
-	Volume   float32       `json:"volume"`
-	Poc3yr   float32       `json:"poc3yr"`
-	Poc1yr   float32       `json:"poc1yr"`
-	Poc0yr   float32       `json:"poc0yr"`
-	Poc1wk   float32       `json:"poc1wk"`
-	Poc1m    float32       `json:"poc1m"`
-	MarketID sql.NullInt32 `json:"market_id"`
+	ID     int64     `json:"id"`
+	Date   time.Time `json:"date"`
+	Open   float64   `json:"open"`
+	High   float64   `json:"high"`
+	Low    float64   `json:"low"`
+	Last   float64   `json:"last"`
+	Range  float64   `json:"range"`
+	Volume float64   `json:"volume"`
+	Market string    `json:"market"`
 }
 
 type OpenPrice struct {
 	ID        int64     `json:"id"`
 	Market    string    `json:"market"`
-	YearOpen  float32   `json:"year_open"`
-	MonthOpen float32   `json:"month_open"`
-	WeekOpen  float32   `json:"week_open"`
+	YearOpen  float64   `json:"year_open"`
+	MonthOpen float64   `json:"month_open"`
+	WeekOpen  float64   `json:"week_open"`
 	Updated   time.Time `json:"updated"`
 }

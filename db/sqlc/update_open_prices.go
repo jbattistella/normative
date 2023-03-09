@@ -2,29 +2,27 @@ package db
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"log"
 	"time"
 )
 
-func updateOpenPrices() error {
-	DB, err := sql.Open(dbDriver, dbSource)
+func UpdateOpenPrices() error {
+	dbQueries, err := ConnectDB()
 	if err != nil {
-		log.Fatal("cannot connect to db:", err)
+		return err
 	}
-
-	dbQueries = New(DB)
 
 	//if the market is open today then ..
 	last, err := dbQueries.GetLastMarketRecord(context.Background())
 
-	openPrices, err := dbQueries.GetOpeningPrice(context.Background(), "ES")
+	openPrices, err := dbQueries.GetOpeningPrice(context.Background(), "es")
 
 	//Get Year Open
 	year := time.Now().Year()
 
 	if last.Date.Year() != openPrices.Updated.Year() {
+		fmt.Println("year")
 
 		date, err := time.Parse("2006-01-02", fmt.Sprintf("%d-01-01", year))
 		if err != nil {
@@ -35,6 +33,8 @@ func updateOpenPrices() error {
 			log.Println(err)
 		}
 
+		fmt.Println(date, date2)
+
 		args := GetMarketDataByDateRangeParams{
 			Date:   date,
 			Date_2: date2,
@@ -46,7 +46,9 @@ func updateOpenPrices() error {
 			log.Println(err)
 		}
 
-		args2 := UpdateYearPriceParams{Market: "ES", YearOpen: marketDay[0].Open}
+		fmt.Println(marketDay)
+
+		args2 := UpdateYearPriceParams{Market: "es", YearOpen: marketDay[0].Open}
 
 		_, err = dbQueries.UpdateYearPrice(context.Background(), args2)
 		if err != nil {
@@ -56,12 +58,19 @@ func updateOpenPrices() error {
 	}
 
 	if last.Date.Month() != openPrices.Updated.Month() {
+		fmt.Println("month")
 		year, month, _ := time.Now().Date()
-		date, err := time.Parse("2006-01-02", fmt.Sprintf("%d-%d-01", year, month))
+		var format string
+		if month < 10 {
+			format = "2006-1-02"
+		} else {
+			format = "2006-01-02"
+		}
+		date, err := time.Parse(format, fmt.Sprintf("%d-%d-01", year, month))
 		if err != nil {
 			log.Println(err)
 		}
-		date2, err := time.Parse("2006-01-02", fmt.Sprintf("%d-%d-05", year, month))
+		date2, err := time.Parse(format, fmt.Sprintf("%d-%d-05", year, month))
 		if err != nil {
 			log.Println(err)
 		}
@@ -77,7 +86,7 @@ func updateOpenPrices() error {
 			log.Println(err)
 		}
 
-		args2 := UpdateMonthPriceParams{Market: "ES", MonthOpen: marketDay[0].Open}
+		args2 := UpdateMonthPriceParams{Market: "es", MonthOpen: marketDay[0].Open}
 
 		_, err = dbQueries.UpdateMonthPrice(context.Background(), args2)
 		if err != nil {
@@ -85,11 +94,11 @@ func updateOpenPrices() error {
 		}
 	}
 
-	_, week := last.Date.ISOWeek()
-	_, currentWeek := openPrices.Updated.ISOWeek()
+	_, lastMarketDayLog := last.Date.ISOWeek()
+	_, lastOpenPriceUpdate := openPrices.Updated.ISOWeek()
 
-	if currentWeek != week {
-
+	if lastOpenPriceUpdate != lastMarketDayLog {
+		fmt.Println("week")
 		var thisWeek []MarketDay
 
 		marketDays, err := dbQueries.GetMarketDataByDays(context.Background(), 7)
@@ -97,16 +106,21 @@ func updateOpenPrices() error {
 			return err
 		}
 
+		_, currentWeek := time.Now().ISOWeek()
+
+		fmt.Println(marketDays)
+
 		for _, v := range marketDays {
 			_, w := v.Date.ISOWeek()
 			if w == currentWeek {
 				thisWeek = append(thisWeek, v)
 			}
 		}
+		fmt.Println(thisWeek)
 
 		weekOpen := thisWeek[0].Open
 
-		args2 := UpdateWeekPriceParams{Market: "ES", WeekOpen: weekOpen}
+		args2 := UpdateWeekPriceParams{Market: "es", WeekOpen: weekOpen}
 
 		_, err = dbQueries.UpdateWeekPrice(context.Background(), args2)
 		if err != nil {
