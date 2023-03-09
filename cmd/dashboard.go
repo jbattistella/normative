@@ -10,7 +10,7 @@ import (
 	"time"
 
 	db "github.com/jbattistella/normative/db/sqlc"
-	"github.com/jbattistella/normative/engine"
+
 	"github.com/spf13/cobra"
 )
 
@@ -57,11 +57,11 @@ func init() {
 
 func dashboard() {
 	// ranges
-	yr, mn, wk, yrC, mnC, wkC, err := db.GetRanges()
+	current, yr, mn, wk, yrC, mnC, wkC, err := db.GetPriceData()
 	if err != nil {
 		log.Println(err)
 	}
-
+	fmt.Printf("Current Price: $%.01f\n", current)
 	fmt.Printf("Period        | price change    | percent change  |\n")
 	fmt.Printf("year-to-date  | %.01f           | %.01f%%          |\n", yr, yrC*100)
 	fmt.Printf("month         | %.01f           | %.01f%%          |\n", mn, mnC*100)
@@ -70,7 +70,7 @@ func dashboard() {
 	fmt.Printf("----------------------------------------------------------------\n")
 
 	//events
-	ep := engine.NewEventParams()
+	ep := db.NewEventParams()
 
 	ep.Region = Region
 	ep.Impact = append(ep.Impact, Impact1)
