@@ -7,16 +7,10 @@ dropdb:
 migrateup:
 	migrate -path db/migrations -database "postgresql://postgres:pJGlBJilIdmLHvJIIFfq@containers-us-west-107.railway.app:6131/railway?sslmode=disable" -verbose up
 
-migratetestup:
-	migrate -path db/migrations -database "postgresql://postgres:pJGlBJilIdmLHvJIIFfq@containers-us-west-107.railway.app:6131/railway?sslmode=disable" -verbose up
-
 migratedown:
-	migrate -path db/migrations -database "postgresql://postgres:pJGlBJilIdmLHvJIIFfq@containers-us-west-107.railway.app:6131/railway?sslmode=disable" -verbose down
-
-migratetestdown:
 	migrate -path db/migrations -database "postgresql://postgres:pJGlBJilIdmLHvJIIFfq@containers-us-west-107.railway.app:6131/railway?sslmode=disable" -verbose down
 
 sqlc:
 	sqlc generate
 	
-.PHONY: craetedb dropdb migrateup migratedown sqlcs
+.PHONY: craetedb dropdb migrateup migratedown sqlcs 

@@ -25,9 +25,18 @@ SELECT * FROM events
 WHERE 
     region = $1
 AND
-    impact = $2
+    impact = $2 
 AND
     impact = $3;
+
+-- name: GetEventsList :many
+SELECT * FROM events
+LIMIT $1;
+
+-- name: GetEventsByRegion :many
+SELECT * FROM Events 
+WHERE region = $1
+LIMIT $2;
 
 
 
