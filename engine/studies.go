@@ -17,21 +17,21 @@ func MovingAverage(values []db.MarketDay, lookback int) float64 {
 	return average
 }
 
-func AverageVolumeByDay(values []db.MarketDay, lookback int) map[string]float32 {
-	volumeMap := make(map[string]float32)
+// func AverageVolumeByDay(values []db.MarketDay, lookback int) map[string]float32 {
+// 	volumeMap := make(map[string]float32)
 
-	weekdayCounter := make(map[string]float32)
+// 	weekdayCounter := make(map[string]float32)
 
-	for i := 0; i < lookback; i++ {
-		wk := values[i].Date.Weekday().String()
-		volumeMap[wk] += values[i].Volume
-		weekdayCounter[wk]++
-	}
+// 	for i := 0; i < lookback; i++ {
+// 		wk := values[i].Date.Weekday().String()
+// 		volumeMap[wk] += values[i].Volume
+// 		weekdayCounter[wk]++
+// 	}
 
-	for k, _ := range volumeMap {
-		volumeMap[k] = volumeMap[k] / weekdayCounter[k]
-	}
+// 	for k, _ := range volumeMap {
+// 		volumeMap[k] = volumeMap[k] / weekdayCounter[k]
+// 	}
 
-	return volumeMap
+// 	return volumeMap
 
-}
+// }

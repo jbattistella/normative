@@ -24,9 +24,9 @@ INSERT INTO open_prices (
 
 type CreateOpeningPriceParams struct {
 	Market    string    `json:"market"`
-	YearOpen  float32   `json:"year_open"`
-	MonthOpen float32   `json:"month_open"`
-	WeekOpen  float32   `json:"week_open"`
+	YearOpen  float64   `json:"year_open"`
+	MonthOpen float64   `json:"month_open"`
+	WeekOpen  float64   `json:"week_open"`
 	Updated   time.Time `json:"updated"`
 }
 
@@ -79,7 +79,7 @@ RETURNING id, market, year_open, month_open, week_open, updated
 
 type UpdateMonthPriceParams struct {
 	Market    string  `json:"market"`
-	MonthOpen float32 `json:"month_open"`
+	MonthOpen float64 `json:"month_open"`
 }
 
 func (q *Queries) UpdateMonthPrice(ctx context.Context, arg UpdateMonthPriceParams) (OpenPrice, error) {
@@ -105,7 +105,7 @@ RETURNING id, market, year_open, month_open, week_open, updated
 
 type UpdateWeekPriceParams struct {
 	Market   string  `json:"market"`
-	WeekOpen float32 `json:"week_open"`
+	WeekOpen float64 `json:"week_open"`
 }
 
 func (q *Queries) UpdateWeekPrice(ctx context.Context, arg UpdateWeekPriceParams) (OpenPrice, error) {
@@ -131,7 +131,7 @@ RETURNING id, market, year_open, month_open, week_open, updated
 
 type UpdateYearPriceParams struct {
 	Market   string  `json:"market"`
-	YearOpen float32 `json:"year_open"`
+	YearOpen float64 `json:"year_open"`
 }
 
 func (q *Queries) UpdateYearPrice(ctx context.Context, arg UpdateYearPriceParams) (OpenPrice, error) {

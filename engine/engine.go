@@ -50,6 +50,7 @@ func (e *EventParams) GetEvents() ([]db.Event, error) {
 	if err != nil {
 		return []db.Event{}, err
 	}
+
 	today := time.Now()
 
 	events, _ := queries.GetEventByDate(context.Background(), today)

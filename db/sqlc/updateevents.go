@@ -20,6 +20,7 @@ func UpdateEvents() error {
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
+	defer DB.Close()
 
 	dbQueries = New(DB)
 
