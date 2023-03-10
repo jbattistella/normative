@@ -103,6 +103,7 @@ func (q *Queries) GetEventByDate(ctx context.Context, date time.Time) ([]Event, 
 const getEventsByRegion = `-- name: GetEventsByRegion :many
 SELECT id, date, time, forecast, impact, last_update, name, previous, region FROM Events 
 WHERE region = $1
+ORDER BY date DESC
 LIMIT $2
 `
 
@@ -146,6 +147,7 @@ func (q *Queries) GetEventsByRegion(ctx context.Context, arg GetEventsByRegionPa
 
 const getEventsList = `-- name: GetEventsList :many
 SELECT id, date, time, forecast, impact, last_update, name, previous, region FROM events
+ORDER BY date DESC
 LIMIT $1
 `
 

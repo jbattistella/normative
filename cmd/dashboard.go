@@ -57,17 +57,28 @@ func init() {
 
 func dashboard() {
 	// ranges
-	current, yr, mn, wk, yrC, mnC, wkC, err := db.GetPriceData()
+	_, cpc, yr, mn, wk, yrC, mnC, wkC, err := db.GetPriceData()
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Printf("Current Price: $%.01f\n", current)
-	fmt.Printf("Period        | price change    | percent change  |\n")
-	fmt.Printf("year-to-date  | %.01f           | %.01f%%          |\n", yr, yrC*100)
-	fmt.Printf("month         | %.01f           | %.01f%%          |\n", mn, mnC*100)
-	fmt.Printf("week          | %.01f            | %.01f%%           |\n", wk, wkC*100)
+	// fmt.Printf("Current Price: $%.01f\n", current)
+	// fmt.Printf("Period        | price change    | percent change  |\n")
+	// fmt.Printf("year-to-date  | %.01f           | %.01f%%          |\n", yr, yrC*100)
+	// fmt.Printf("month         | %.01f           | %.01f%%          |\n", mn, mnC*100)
+	// fmt.Printf("week          | %.01f            | %.01f%%           |\n", wk, wkC*100)
+
+	table := fmt.Sprintf(
+		`******************* S&P 500 Futures ******************
+	Current Daily Percent Change: %.01f%%
+	| Period        | price change     | percent change |
+	-------------------------------------------------------
+	| year-to-date  | $%.01f            | %.01f%%          |
+	| month         | $%.01f           | %.01f%%          |
+	| week          | $%.01f          | %.01f%%          |
+	-------------------------------------------------------`,
+		cpc, yr, yrC*100, mn, mnC*100, wk, wkC*100)
+	fmt.Println(table)
 	fmt.Printf("\n")
-	fmt.Printf("----------------------------------------------------------------\n")
 
 	//events
 	ep := db.NewEventParams()
@@ -80,13 +91,12 @@ func dashboard() {
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println("************ECONOMIC EVENTS****************")
-	fmt.Printf("  date       |   time       |   name                     |  impact  |\n ")
+	fmt.Println("********************** ECONOMIC EVENTS *************************")
 	for _, v := range ev {
 		date := v.Date.String()[0:10]
 		time := v.Time.Add(time.Hour * -6).String()[12:19]
 
-		fmt.Printf("%s  |  %s CT  |   %s   |   %s   |\n", date, time, v.Name, v.Impact)
+		fmt.Printf("|   %s   |   %s CT   |   %s  (%s)\n", date, time, v.Name, v.Region)
 
 	}
 
