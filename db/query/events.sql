@@ -31,11 +31,13 @@ AND
 
 -- name: GetEventsList :many
 SELECT * FROM events
+ORDER BY date DESC
 LIMIT $1;
 
 -- name: GetEventsByRegion :many
 SELECT * FROM Events 
 WHERE region = $1
+ORDER BY date DESC
 LIMIT $2;
 
 

@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"encoding/csv"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -22,8 +21,6 @@ func UpdateMarketDays() error {
 	if err != nil {
 		return err
 	}
-
-	fmt.Println("Updating Market Days")
 
 	reader := csv.NewReader(csvFile)
 
